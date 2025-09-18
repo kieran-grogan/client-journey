@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paw Hootz Client Journeys</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Paw Hootz Client Journeys</h1>
+      <p>Visualizing the new and returning client experiences with automated touchpoints.</p>
+    </div>
+  </header>
+  <main class="container">
+    <section class="diagram-section" aria-labelledby="new-client-title">
+      <div class="section-header">
+        <h2 id="new-client-title">New Client Journey (Phone &amp; Web)</h2>
+        <div class="toolbar" role="group" aria-label="New client actions">
+          <button type="button" class="btn" data-action="copy" data-target="new-client">Copy Mermaid</button>
+          <button type="button" class="btn" data-action="print">Print</button>
+        </div>
+      </div>
+      <pre class="mermaid" id="new-client">flowchart TD
+
+%% ========= LEFT COLUMN: NEW CLIENT =========
+subgraph L[New Client Journey]
+direction TB
+
+L0["Discovery &amp; Booking<br/>(phone or website)"]
+class L0 process;
+L0a{"Booking channel?"}
+class L0a decision;
+
+L1p["Phone booking with receptionist<br/>Collect client &amp; pet info;<br/>select {{service}}"]
+class L1p process;
+
+L1w["Online booking<br/>Select {{service}}; intake form;<br/>upload vax if needed"]
+class L1w process;
+
+L2{{"System Update<br/>Create/Update Opportunity<br/>Stage = This Month"}}
+class L2 system;
+
+LwaitM{{"System Wait<br/>Until 1 month before"}}
+class LwaitM system;
+
+L3{{"System Update<br/>Stage → This Week"}}
+class L3 system;
+
+LwaitW{{"System Wait<br/>Until 7 days before"}}
+class LwaitW system;
+
+L4{{"System Update<br/>Stage → Today"}}
+class L4 system;
+
+Lwait18{{"System Wait<br/>Until 18 hours before"}}
+class Lwait18 system;
+
+L5n[/"Immediate Client Notices"/]
+class L5n notify;
+L5n1[/"SMS: “Paw Hootz: {{pet.name}} is booked for {{service}} on {{appointment.date}} {{appointment.time}} at {{location.name}}. Manage: {{manage_link}}. Cancel policy applies.”"/]
+class L5n1 notify;
+L5n2[/"Email: Subject “Appointment Confirmed — {{pet.name}} on {{appointment.date}}”<br/>Includes {{location.address}}, cancel policy, {{manage_link}}"/]
+class L5n2 notify;
+
+L5r[/"24h Reminder — SMS &amp; Email:<br/>Friendly reminder for {{appointment.date}} {{appointment.time}} at {{location.name}}. Manage: {{manage_link}}"/]
+class L5r notify;
+
+L6["Check-In &amp; Groom Day<br/>Staff completes intake;<br/>instructions sent to groomer"]
+class L6 process;
+
+L7a{"Grooming issues<br/>or upcharges?"}
+class L7a decision;
+
+L7mgr[/"Internal Manager Alert<br/>“Groomer Alert — Upcharges Needed. Client: {{contact.first_name}}, Pet: {{pet.name}}. Issue: {{issue_summary}}. Please review/approve.”"/]
+class L7mgr notify;
+
+L7b{"Extra time needed?"}
+class L7b decision;
+
+L7yes[/"Client SMS — Extra Time:<br/>“Heads up! We need ~{{extra_minutes}} more minutes for {{pet.name}}. New ETA {{new_eta}}. If additional fee (~${{extra_fee}}) applies, pay: {{payment_link}}. Reply OK with questions.”"/]
+class L7yes notify;
+
+L8["Completion &amp; Follow-Up Prep<br/>Finalize groom; confirm notes"]
+class L8 process;
+
+L8pickup[/"Pickup-Ready SMS:<br/>“{{pet.name}} is ready for pickup at {{location.name}}. See you soon!”"/]
+class L8pickup notify;
+
+L8follow[/"Same-Day Follow-Up<br/>SMS/Email: “Thanks for choosing Paw Hootz! How was {{pet.name}}’s {{service}}? Review or rebook anytime: {{manage_link}}.”"/]
+class L8follow notify;
+
+Lpost13{{"System Wait<br/>13 hours after event"}}
+class Lpost13 system;
+
+Lremove{{"System Update<br/>Remove Opportunity<br/>from pipeline"}}
+class Lremove system;
+
+L0 --> L0a
+L0a -->|"Phone"| L1p
+L0a -->|"Online"| L1w
+L1p --> L2
+L1w --> L2
+L2 --> LwaitM --> L3 --> LwaitW --> L4 --> Lwait18 --> L5n
+L5n --> L5n1
+L5n --> L5n2
+L5n1 --> L5r
+L5n2 --> L5r
+L5r --> L6 --> L7a
+L7a -->|"NO"| L8
+L7a -->|"YES"| L7mgr --> L7b
+L7b -->|"YES"| L7yes --> L8
+L7b -->|"NO"| L8
+L8 --> L8pickup --> L8follow --> Lpost13 --> Lremove
+
+end
+
+%% ====== Styles ======
+classDef process fill:#EFF2F6,stroke:#6B7280,stroke-width:1px,color:#111827;
+classDef decision fill:#E5E7EB,stroke:#6B7280,stroke-width:1px,color:#111827;
+classDef notify fill:#EAF4FF,stroke:#2563EB,stroke-width:1px,color:#0F172A;
+classDef system fill:#FFF7ED,stroke:#EA580C,stroke-width:1px,color:#111827;</pre>
+    </section>
+
+    <section class="diagram-section" aria-labelledby="returning-client-title">
+      <div class="section-header">
+        <h2 id="returning-client-title">Returning Client Journey (Client Portal)</h2>
+        <div class="toolbar" role="group" aria-label="Returning client actions">
+          <button type="button" class="btn" data-action="copy" data-target="returning-client">Copy Mermaid</button>
+          <button type="button" class="btn" data-action="print">Print</button>
+        </div>
+      </div>
+      <pre class="mermaid" id="returning-client">flowchart TD
+
+%% ========= RIGHT COLUMN: RETURNING CLIENT =========
+subgraph R[Returning Client Journey (Portal)]
+direction TB
+
+R0["Client Portal Login<br/>(saved profile &amp; pets)"]
+class R0 process;
+
+R1["Select services &amp; date/time<br/>Add-ons as needed"]
+class R1 process;
+
+R2{{"System Update<br/>Auto-fill appointment<br/>Stage = This Month"}}
+class R2 system;
+
+RwaitM{{"System Wait<br/>Until 1 month before"}}
+class RwaitM system;
+
+R3{{"System Update<br/>Stage → This Week"}}
+class R3 system;
+
+RwaitW{{"System Wait<br/>Until 7 days before"}}
+class RwaitW system;
+
+R4{{"System Update<br/>Stage → Today"}}
+class R4 system;
+
+Rwait18{{"System Wait<br/>Until 18 hours before"}}
+class Rwait18 system;
+
+R5n[/"Immediate Client Notices"/]
+class R5n notify;
+R5n1[/"SMS: “Paw Hootz: {{pet.name}} is booked for {{service}} on {{appointment.date}} {{appointment.time}} at {{location.name}}. Manage: {{manage_link}}. Cancel policy applies.”"/]
+class R5n1 notify;
+R5n2[/"Email: Subject “Appointment Confirmed — {{pet.name}} on {{appointment.date}}”<br/>Includes {{location.address}}, cancel policy, {{manage_link}}"/]
+class R5n2 notify;
+
+R5r[/"24h Reminder — SMS &amp; Email:<br/>Friendly reminder for {{appointment.date}} {{appointment.time}} at {{location.name}}. Manage: {{manage_link}}"/]
+class R5r notify;
+
+R6["Express Check-In<br/>Prefilled forms, quick drop-off"]
+class R6 process;
+
+R7a{"Grooming issues<br/>or upcharges?"}
+class R7a decision;
+
+R7mgr[/"Internal Manager Alert<br/>“Groomer Alert — Upcharges Needed. Client: {{contact.first_name}}, Pet: {{pet.name}}. Issue: {{issue_summary}}. Please review/approve.”"/]
+class R7mgr notify;
+
+R7b{"Extra time needed?"}
+class R7b decision;
+
+R7yes[/"Client SMS — Extra Time:<br/>“Heads up! We need ~{{extra_minutes}} more minutes for {{pet.name}}. New ETA {{new_eta}}. If additional fee (~${{extra_fee}}) applies, pay: {{payment_link}}. Reply OK with questions.”"/]
+class R7yes notify;
+
+R8["Completion &amp; Follow-Up Prep<br/>Finalize groom; confirm notes"]
+class R8 process;
+
+R8pickup[/"Pickup-Ready SMS:<br/>“{{pet.name}} is ready for pickup at {{location.name}}. See you soon!”"/]
+class R8pickup notify;
+
+R8follow[/"Same-Day Follow-Up<br/>SMS/Email: “Thanks for choosing Paw Hootz! How was {{pet.name}}’s {{service}}? Review or rebook anytime: {{manage_link}}.”"/]
+class R8follow notify;
+
+Rpost13{{"System Wait<br/>13 hours after event"}}
+class Rpost13 system;
+
+Rremove{{"System Update<br/>Remove Opportunity"}}
+class Rremove system;
+
+R0 --> R1 --> R2 --> RwaitM --> R3 --> RwaitW --> R4 --> Rwait18 --> R5n
+R5n --> R5n1
+R5n --> R5n2
+R5n1 --> R5r
+R5n2 --> R5r
+R5r --> R6 --> R7a
+R7a -->|"NO"| R8
+R7a -->|"YES"| R7mgr --> R7b
+R7b -->|"YES"| R7yes --> R8
+R7b -->|"NO"| R8
+R8 --> R8pickup --> R8follow --> Rpost13 --> Rremove
+
+end
+
+%% ====== Styles ======
+classDef process fill:#EFF2F6,stroke:#6B7280,stroke-width:1px,color:#111827;
+classDef decision fill:#E5E7EB,stroke:#6B7280,stroke-width:1px,color:#111827;
+classDef notify fill:#EAF4FF,stroke:#2563EB,stroke-width:1px,color:#0F172A;
+classDef system fill:#FFF7ED,stroke:#EA580C,stroke-width:1px,color:#111827;</pre>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <small>Deployed on Vercel · Mermaid v10</small>
+    </div>
+  </footer>
+  <script>
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const mermaidSourceMap = new Map();
+
+    const renderMermaid = () => {
+      const theme = prefersDarkScheme.matches ? 'dark' : 'default';
+      mermaid.initialize({ startOnLoad: true, theme });
+      mermaid.run({ querySelector: '.mermaid' });
+    };
+
+    const setupToolbars = () => {
+      const toolbarButtons = document.querySelectorAll('.toolbar .btn');
+      toolbarButtons.forEach((button) => {
+        const action = button.dataset.action;
+        if (action === 'copy') {
+          button.addEventListener('click', async () => {
+            const targetId = button.dataset.target;
+            const source = mermaidSourceMap.get(targetId);
+            if (!source) {
+              console.warn(`No Mermaid source found for ${targetId}`);
+              return;
+            }
+            try {
+              await navigator.clipboard.writeText(source);
+              const original = button.textContent;
+              button.textContent = 'Copied!';
+              button.disabled = true;
+              setTimeout(() => {
+                button.textContent = original;
+                button.disabled = false;
+              }, 2000);
+            } catch (error) {
+              console.error('Copy failed', error);
+              alert('Unable to copy Mermaid code. Please copy manually.');
+            }
+          });
+        }
+        if (action === 'print') {
+          button.addEventListener('click', () => {
+            window.print();
+          });
+        }
+      });
+    };
+
+    const initializeApp = () => {
+      const mermaidBlocks = document.querySelectorAll('pre.mermaid');
+      mermaidBlocks.forEach((block) => {
+        if (block.id) {
+          mermaidSourceMap.set(block.id, block.textContent.trim());
+        }
+      });
+      renderMermaid();
+      setupToolbars();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+    } else {
+      initializeApp();
+    }
+
+    prefersDarkScheme.addEventListener('change', renderMermaid);
+  </script>
+</body>
+</html>
